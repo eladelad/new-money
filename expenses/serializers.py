@@ -1,0 +1,48 @@
+from expenses.models import *
+from rest_framework import serializers
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name', 'icon_class', 'user')
+        read_only_fields = ('user', )
+
+
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = ('id', 'name', 'category', 'icon_class', 'user')
+        read_only_fields = ('user', )
+
+
+class IconClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IconClass
+        fields = ('id', 'name', 'icon')
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ('id', 'name', 'icon_class', 'month_balance', 'user')
+        read_only_fields = ('user', )
+
+
+class PaymentTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentType
+        fields = ('id', 'name', 'icon_class', 'account', )
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ('id', 'sub_category', 'amount', 'payment_type', 'comment', 'attachment', 'tran_date', 'account')
+        read_only_fields = ('account', )
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attachment
+        fields = ('id', 'user', 'file', )
