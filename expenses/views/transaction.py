@@ -20,7 +20,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         if 'payment_type_pk' in self.kwargs:
             lookup['payment_type'] = self.kwargs['payment_type_pk']
         elif 'account_pk' in self.kwargs:
-            lookup['account_pk'] = self.kwargs['account_pk']
+            lookup['account_id'] = self.kwargs['account_pk']
         else:
             lookup['user'] = self.request.user
         return Transaction.objects.filter(**lookup)

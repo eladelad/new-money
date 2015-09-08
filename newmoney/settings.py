@@ -52,6 +52,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'expenses.middleware.disable.DisableCSRF',
+    'expenses.middleware.crossdomainxhr.XsSharing',
 )
 
 ROOT_URLCONF = 'newmoney.urls'

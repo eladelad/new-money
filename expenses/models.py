@@ -19,7 +19,8 @@ class GeneralObject(models.Model):
 class IconClass(GeneralObject):
     name = models.CharField(max_length=150)
     icon = models.CharField(max_length=150)
-
+    def __unicode__(self):
+        return self.name
 
 def content_file_path(instance, filename):
     return '/'.join([str(instance.user.id), filename])
@@ -37,6 +38,8 @@ class Category(GeneralObject):
     name = models.CharField(max_length=500)
     icon_class = models.ForeignKey(IconClass)
     user = models.ForeignKey(User, null=True)
+    def __unicode__(self):
+        return self.name
 
 
 class SubCategory(GeneralObject):
@@ -46,6 +49,9 @@ class SubCategory(GeneralObject):
     user = models.ForeignKey(User, null=True)
     income = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return self.name
+
 
 class Account(GeneralObject):
     name = models.CharField(max_length=500)
@@ -53,11 +59,17 @@ class Account(GeneralObject):
     month_balance = models.FloatField(null=False, default=0)
     user = models.ForeignKey(User, null=True)
 
+    def __unicode__(self):
+        return self.name
+
 
 class PaymentType(GeneralObject):
     name = models.CharField(max_length=500)
     icon_class = models.ForeignKey(IconClass)
     account = models.ForeignKey(Account)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Transaction(GeneralObject):
@@ -77,13 +89,16 @@ class Transaction(GeneralObject):
         if not self.id and self.income:
             self.amount -= self.amount
         calculate_balance(self.account)
-        return super(GeneralObject, self).save(*args, **kwargs)
+        return super(Transaction, self).save(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.comment
 
 
 def calculate_balance(account):
     transactions = Transaction.objects.filter(tran_date__lte=datetime.date.today, paid=False)
     for transaction in transactions:
-        account.month_balance -= transaction
+        account.month_balance -= transaction.amount
         transaction.paid = True
     transactions.update(paid=True)
     account.save()

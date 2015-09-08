@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    icon_class = serializers.ReadOnlyField(source='icon_class.icon')
     class Meta:
         model = Category
         fields = ('id', 'name', 'icon_class', 'user')
@@ -10,9 +11,15 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
+    icon = serializers.ReadOnlyField(source='icon_class.icon')
+    parent_icon = serializers.ReadOnlyField(source='category.icon_class.icon')
+    category = serializers.ReadOnlyField(source='category.name')
+    user = serializers.ReadOnlyField(source='user.username')
+
+
     class Meta:
         model = SubCategory
-        fields = ('id', 'name', 'category', 'icon_class', 'user')
+        fields = ('id', 'name', 'category', 'icon', 'parent_icon', 'user')
         read_only_fields = ('user', )
 
 
