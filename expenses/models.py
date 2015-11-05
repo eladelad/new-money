@@ -78,27 +78,37 @@ class Transaction(GeneralObject):
     account = models.ForeignKey(Account, editable=False, default=None)
     payment_type = models.ForeignKey(PaymentType)
     comment = models.CharField(max_length=500, null=True)
-    attachment = models.ForeignKey(Attachment)
+    attachment = models.ForeignKey(Attachment, null=True)
     tran_date = models.DateField('Transaction Date', default=datetime.date.today)
     paid = models.BooleanField(default=False)
     income = models.BooleanField(default=False)
+    parent_transaction = models.ForeignKey('self', null=True, default=None)
+    recurrent_date = models.DateField('Reccurent Date', null=True, default=None)
 
     def save(self, *args, **kwargs):
         ''' On save, update account '''
         self.account = self.payment_type.account
-        if not self.id and self.income:
-            self.amount -= self.amount
-        calculate_balance(self.account)
+        # if not self.id and self.income:
+        #     self.amount -= self.amount
         return super(Transaction, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.comment
 
 
+def calculate_transaction(account, transaction, reverse=False):
+    amount = transaction.amount
+    if transaction.income:
+        amount = -amount
+    if reverse:
+        amount = -amount
+    account.month_balance -= amount
+
+
 def calculate_balance(account):
     transactions = Transaction.objects.filter(tran_date__lte=datetime.date.today, paid=False)
     for transaction in transactions:
-        account.month_balance -= transaction.amount
-        transaction.paid = True
+        calculate_transaction(account, transaction)
+        #transaction.paid = True
     transactions.update(paid=True)
     account.save()

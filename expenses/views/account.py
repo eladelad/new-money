@@ -15,7 +15,10 @@ class AccountViewSet(viewsets.ModelViewSet):
         if self.request.user.is_staff:
             return Account.objects.all()
         else:
-            return Account.objects.filter(user=self.request.user)
+            accounts = Account.objects.filter(user=self.request.user)
+            for account in accounts:
+                calculate_balance(account)
+            return accounts
 
 
 class PaymentTypeViewSet(viewsets.ModelViewSet):

@@ -43,9 +43,10 @@ class PaymentTypeSerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Transaction
-        fields = ('id', 'sub_category', 'amount', 'payment_type', 'comment', 'attachment', 'tran_date', 'account')
+        fields = ('id', 'sub_category', 'amount', 'payment_type', 'comment', 'attachment', 'tran_date', 'account', )
         read_only_fields = ('account', )
 
 
